@@ -13,21 +13,38 @@
       try {
         const eventData = JSON.parse(event.data);
         if (eventData.event === "appContext") {
+          const ACCOUNT_ID = eventData.data.conversation.account_id
+          const INBOX_ID = eventData.data.conversation.inbox_id
           const contactInfosDiv = document.getElementById("contact-infos")
           contactInfosDiv.innerHTML = `Numero de quem estamos conversando = ${eventData.data.contact.phone_number}`
 
           const conversationInfosDiv = document.getElementById("conversation-infos")
           conversationInfosDiv.innerHTML = `ID da caixa de entrada que essa conversa está = ${eventData.data.conversation.inbox_id}`
 
+
+
           document.getElementById('debug').innerText = 
             "Usuário conectado: " + eventData.data.contact.email;
           
           console.log("Payload completo:", eventData.data);
+          fetchInboxData(ACCOUNT_ID, INBOX_ID)
         }
       } catch (e) {
         console.error("Não é um JSON válido", event.data);
       }
     });
+
+    async function fetchInboxData(account_id, inbox_id) {
+        const options = {method: 'GET', headers: {api_access_token: '4tMmga9Jkp7439gKfqozFiLs'}};
+        try {
+            const res = await fetch(`https://app.chatwoot.com/api/v1/accounts/${account_id}/inboxes/${inbox_id}/`, options)
+            const data = await res.json()
+            console.log("Dados da Inbox = ", data)
+        } catch(err) {
+            document.getElementById("inbox-details").innerText = "Erro ao carregar Inbox";
+            console.error(err);
+        }
+    }
 
     // Avisa o Chatwoot que a página está pronta para receber dados
     window.parent.postMessage('chatwoot-dashboard-app:fetch-info', '*');
