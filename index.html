@@ -3,6 +3,8 @@
 <body>
   <h1>Testando Dashboard App</h1>
   <div id="debug">Aguardando dados do Chatwoot...</div>
+  <div id="conversation-infos"></div>
+  <div id="contact-infos"></div>
 
   <script>
     window.addEventListener("message", function(event) {
@@ -11,6 +13,11 @@
       try {
         const eventData = JSON.parse(event.data);
         if (eventData.event === "appContext") {
+          const contactInfosDiv = document.getElementById("contact-infos")
+          contactInfosDiv.innerHTML = eventData.data.contact
+
+          const conversationInfosDiv = document.getElementById("conversation-infos")
+          conversationInfosDiv.innerHTML = eventData.data.conversation
           document.getElementById('debug').innerText = 
             "Usuário conectado: " + eventData.data.contact.email;
           
