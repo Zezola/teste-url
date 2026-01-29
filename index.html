@@ -7,6 +7,7 @@
   <script>
     window.addEventListener("message", function(event) {
       // O Chatwoot manda strings JSON, precisa dar parse
+      console.log("Pegou o evento do Chatwoot")
       try {
         const eventData = JSON.parse(event.data);
         if (eventData.event === "appContext") {
