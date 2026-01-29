@@ -1,39 +1,62 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <style>
+    /* Estilo para o JSON não ficar zoneado */
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto; /* Adiciona scroll se o JSON for muito largo */
+      font-size: 12px;
+      max-height: 400px; /* Limita a altura para não quebrar o layout */
+    }
+    .label { font-weight: bold; color: #333; margin-top: 10px; display: block; }
+  </style>
+</head>
 <body>
   <h1>Testando Dashboard App</h1>
-  <div id="debug">Aguardando dados do Chatwoot...</div>
-  <div id="conversation-infos"></div>
-  <div id="contact-infos"></div>
+  
+  <div class="card">
+    <div id="debug">Aguardando dados do Chatwoot...</div>
+    <div id="contact-infos"></div>
+    <div id="conversation-infos"></div>
+  </div>
+
+  <span class="label">Payload Completo:</span>
+  <pre id="full-payload">Aguardando evento...</pre>
 
   <script>
     window.addEventListener("message", function(event) {
       console.log("Pegou o evento do Chatwoot")
       try {
         const eventData = JSON.parse(event.data);
+        
         if (eventData.event === "appContext") {
-          const ACCOUNT_ID = eventData.data.conversation.account_id
-          const INBOX_ID = eventData.data.conversation.inbox_id
-          const contactInfosDiv = document.getElementById("contact-infos")
-          contactInfosDiv.innerHTML = `Numero de quem estamos conversando = ${eventData.data.contact.phone_number}`
-
-          const conversationInfosDiv = document.getElementById("conversation-infos")
-          conversationInfosDiv.innerHTML = `ID da caixa de entrada que essa conversa está = ${eventData.data.conversation.inbox_id}`
-          conversationInfosDiv.innerText = `ID da conta em que a conversa está = ${ACCOUNT_ID}`
-
-
-          document.getElementById('debug').innerText = 
-            "Usuário conectado: " + eventData.data.contact.email;
+          const data = eventData.data; // O objeto principal
           
-          console.log("Payload completo:", eventData.data);
+          // 1. Mostrar informações específicas
+          document.getElementById('debug').innerText = "Usuário: " + (data.contact.email || "Sem e-mail");
+          
+          document.getElementById("contact-infos").innerHTML = 
+            `<span class="label">Telefone:</span> ${data.contact.phone_number || 'N/A'}`;
+
+          document.getElementById("conversation-infos").innerHTML = 
+            `<span class="label">IDs:</span> Conta: ${data.conversation.account_id} | Inbox: ${data.conversation.inbox_id}`;
+
+          // 2. MOSTRAR O EVENTO COMPLETO SEM FICAR ZOADO
+          // O segredo está no 'null, 2' para indentar o JSON
+          document.getElementById('full-payload').textContent = JSON.stringify(data, null, 2);
+          
+          console.log("Payload completo:", data);
         }
       } catch (e) {
-        console.error("Não é um JSON válido", event.data);
+        // Ignora se não for JSON
       }
     });
 
-
-    // Avisa o Chatwoot que a página está pronta para receber dados
+    // Avisa o Chatwoot que a página está pronta
     window.parent.postMessage('chatwoot-dashboard-app:fetch-info', '*');
   </script>
 </body>
