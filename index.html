@@ -37,7 +37,7 @@
     async function fetchInboxData(account_id, inbox_id) {
         const options = {method: 'GET', headers: {api_access_token: '4tMmga9Jkp7439gKfqozFiLs'}};
         try {
-            const res = await fetch(`https://app.chatwoot.com/api/v1/accounts/${account_id}/inboxes/${inbox_id}/`, options)
+            const res = await fetch(`http://localhost:8081/api/v1/accounts/${account_id}/inboxes/${inbox_id}/`, options)
             const data = await res.json()
             console.log("Dados da Inbox = ", data)
         } catch(err) {
