@@ -14,10 +14,10 @@
         const eventData = JSON.parse(event.data);
         if (eventData.event === "appContext") {
           const contactInfosDiv = document.getElementById("contact-infos")
-          contactInfosDiv.innerHTML = JSON.parse(eventData.data.contact)
+          contactInfosDiv.innerHTML = JSON.stringify(eventData.data.contact)
 
           const conversationInfosDiv = document.getElementById("conversation-infos")
-          conversationInfosDiv.innerHTML = JSON.parse(eventData.data.conversation)
+          conversationInfosDiv.innerHTML = JSON.stringify(eventData.data.conversation)
 
           document.getElementById('debug').innerText = 
             "Usuário conectado: " + eventData.data.contact.email;
